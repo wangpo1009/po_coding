@@ -1,0 +1,328 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Flow</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="icon" href="images/sea-waves.png" type="image/png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background-color: skyblue;
+    }
+
+    #navbar {
+      background-color: #A2D4F4;
+      color: navy;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    #navbar .brand {
+      display: flex;
+      align-items: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    #navbar .brand img {
+      width: 24px;
+      height: 24px;
+      margin-right: 10px;
+    }
+
+    #navbar #date-display {
+      font-size: 1rem;
+    }
+
+    #content {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    #weather-info {
+      width: 35%;
+      padding: 20px;
+      background-color: skyblue;
+      overflow-y: auto;
+    }
+
+    #map {
+      flex: 1;
+    }
+
+    .card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+
+    .forecast-day {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .forecast-day:last-child {
+      border-bottom: none;
+    }
+
+    #unit-btn {
+      margin-left: 10px;
+      padding: 5px 10px;
+      cursor: pointer;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: white;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="navbar">
+    <div class="brand">
+      <img src="images/sea-waves.png" alt="Wave Logo">
+      <span>Flow</span>
+    </div>
+    <div id="date-display"></div>
+  </div>
+  <div id="content">
+    <div id="weather-info">
+      <div class="card">
+        <h2 id="city-name">Ha Noi</h2>
+        <p id="desc">---</p>
+        <p>
+          <i class="fa-solid fa-temperature-high" style="color: gray"></i>
+          <b>Temperature:</b>
+          <span id="temp">-- °C</span>
+          <button id="unit-btn" onclick="toggleUnit()">°C/°F</button>
+        </p>
+        <p>
+          <i class="fa-solid fa-water" style="color: blue"></i>
+          <b>Humidity:</b> <span id="humidity">--%</span>
+        </p>
+        <p>
+          <i class="fa-solid fa-wind" style="color: green"></i>
+          <b>Wind:</b> <span id="wind">-- km/h</span>
+        </p>
+        <p>
+          <i class="fa-solid fa-eye" style="color: purple"></i>
+          <b>Visibility:</b> <span id="visibility">-- km</span>
+        </p>
+      </div>
+      <div class="card">
+        <h3>5-Day Forecast</h3>
+        <div id="forecast-container"></div>
+      </div>
+      <div class="card">
+        <h3>Advice</h3>
+        <ul id="advice-list"></ul>
+      </div>
+    </div>
+    <div id="map"></div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    // Tạo map
+  var map = L.map("map").setView([16, 107], 5);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: "© OpenStreetMap"
+  }).addTo(map);
+
+  // Biến global
+  let currentUnit = "C"; // "C" hoặc "F"
+  let currentCity = "Hanoi";
+
+  // Hàm đổi định dạng nhiệt độ
+  function formatTemp(celsiusValue) {
+    if (currentUnit === "C") {
+      return Math.round(celsiusValue) + "°C";
+    } else {
+      return Math.round((celsiusValue * 9 / 5) + 32) + "°F";
+    }
+  }
+
+  // Hàm đổi đơn vị
+  function toggleUnit() {
+    currentUnit = currentUnit === "C" ? "F" : "C";
+    // Refresh lại city hiện tại
+    fetchWeather(cities[currentCity][0], cities[currentCity][1], currentCity);
+  }
+
+  // Hàm lấy dữ liệu NASA POWER 1 tháng trước
+async function fetchWeather(lat, lon, city) {
+  const today = new Date();
+  const startDate = new Date(today);
+  startDate.setMonth(startDate.getMonth() - 1);
+  const endDate = new Date(startDate);
+  endDate.setDate(startDate.getDate() + 4);
+
+  const start = startDate.toISOString().slice(0, 10).replace(/-/g, "");
+  const end = endDate.toISOString().slice(0, 10).replace(/-/g, "");
+
+  // Tham số NASA POWER
+  const url = `https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M,T2M_MAX,T2M_MIN,RH2M,WS2M,PRECTOTCORR,ALLSKY_KT,ALLSKY_UVINDEX&community=RE&longitude=${lon}&latitude=${lat}&start=${start}&end=${end}&format=JSON`;
+
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (!data.properties || !data.properties.parameter) {
+      throw new Error("Invalid data structure from NASA POWER");
+    }
+
+    const weather = data.properties.parameter;
+    const days = Object.keys(weather.T2M);
+
+    // Chuyển dữ liệu
+    const cityData = {
+      current: {
+        temp: weather.T2M[days[0]],
+        tempMin: weather.T2M_MIN[days[0]],
+        tempMax: weather.T2M_MAX[days[0]],
+        desc: "NASA Data",
+        humidity: weather.RH2M[days[0]],
+        wind: (weather.WS2M[days[0]] * 3.6).toFixed(1), // m/s → km/h
+        rain: weather.PRECTOTCORR[days[0]],
+        cloud: weather.ALLSKY_KT[days[0]],
+        uv: weather.ALLSKY_UVINDEX[days[0]],
+        visibility: "--"
+      },
+      forecast: days.map((d, i) => {
+        let label;
+        if (i === 0) label = "Today (1 month ago)";
+        else if (i === 1) label = "Tomorrow (1 month ago)";
+        else {
+          const year = d.slice(0, 4);
+          const month = d.slice(4, 6);
+          const day = d.slice(6, 8);
+          label = `${day}/${month}/${year}`;
+        }
+        return {
+          day: label,
+          icon: "☀️", // Có thể mở rộng logic chọn icon
+          min: weather.T2M_MIN[d],
+          max: weather.T2M_MAX[d],
+          rain: weather.PRECTOTCORR[d],
+          cloud: weather.ALLSKY_KT[d],
+          uv: weather.ALLSKY_UVINDEX[d]
+        };
+      })
+    };
+
+    updateWeatherFromAPI(city, cityData);
+
+  } catch (err) {
+    console.error("NASA API error:", err);
+    document.getElementById("desc").innerText = "⚠️ Data unavailable";
+  }
+}
+  // Update UI
+  function updateWeatherFromAPI(city, data) {
+    currentCity = city;
+
+    document.getElementById("city-name").innerText = city;
+    document.getElementById("temp").innerText = formatTemp(data.current.temp);
+    document.getElementById("desc").innerText = data.current.desc;
+    document.getElementById("humidity").innerText = data.current.humidity + "%";
+    document.getElementById("wind").innerText = data.current.wind + " km/h";
+    document.getElementById("visibility").innerText = data.current.visibility;
+
+    // Advice
+    const adviceListElem = document.getElementById("advice-list");
+    adviceListElem.innerHTML = "";
+    const advices = generateAdvice(
+      data.current.temp,
+      data.current.desc,
+      data.current.humidity,
+      data.current.wind,
+      data.current.rain,
+      data.current.cloud,
+      data.current.uv
+    );
+    advices.forEach(a => {
+      const li = document.createElement("li");
+      li.textContent = a;
+      adviceListElem.appendChild(li);
+    });
+
+    // Forecast
+    const forecastContainer = document.getElementById("forecast-container");
+    forecastContainer.innerHTML = "";
+    data.forecast.forEach(f => {
+      const div = document.createElement("div");
+      div.className = "forecast-day";
+      div.innerHTML = `<span>${f.icon} ${f.day}</span><span>${formatTemp(f.min)} - ${formatTemp(f.max)}</span>`;
+      forecastContainer.appendChild(div);
+    });
+  }
+
+    // Hàm tạo lời khuyên
+    function generateAdvice(temp, desc, humidity, wind, rain = 0, cloud = 0, uv = 0) {
+    const adviceList = [];
+
+    // Temperature
+    if (temp < 0) adviceList.push("🥶 It's freezing! Wear multiple layers, a warm coat, hat, and gloves.");
+    else if (temp < 10) adviceList.push("🧥 It's cold. A jacket or sweater is recommended.");
+    else if (temp > 35) adviceList.push("🔥 Very hot! Stay hydrated, avoid going out at noon.");
+    else if (temp > 25) adviceList.push("😎 Nice weather! Light clothing will be comfortable.");
+
+    // Condition
+    if (desc.includes("Rain") || rain > 2) adviceList.push("☔ Rainy day. Bring an umbrella or raincoat.");
+    if (cloud > 0.6) adviceList.push("☁️ Cloudy skies, it might rain. Better bring a raincoat.");
+    if (uv > 7) adviceList.push("🌞 High UV index! Use sunscreen and limit sun exposure.");
+
+    // Wind
+    if (wind > 25) adviceList.push("💨 Strong winds today. Secure loose items and be careful with umbrellas.");
+    else if (wind > 15) adviceList.push("🍃 Moderate winds. A light jacket may help with wind chill.");
+
+    // Humidity
+    if (humidity > 80) adviceList.push("💧 High humidity. It may feel warmer than the actual temperature.");
+
+    return adviceList;
+  }
+
+    // Tọa độ các thành phố
+    const cities = {
+      "Hanoi": [21.0285, 105.8542],
+      "Ho Chi Minh": [10.7769, 106.7009],
+      "Da Nang": [16.0471, 108.2068],
+      "Can Tho": [10.0452, 105.7469]
+    };
+
+    // Gán marker → fetchWeather
+    for (let city in cities) {
+      const [lat, lon] = cities[city];
+      L.marker([lat, lon]).addTo(map).on("click", () => fetchWeather(lat, lon, city));
+    }
+
+    // Hiển thị ngày
+    function updateDate() {
+      const now = new Date();
+      const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+      document.getElementById("date-display").textContent = now.toLocaleDateString('en-GB', options);
+    }
+    setInterval(updateDate, 1000);
+
+    // Load mặc định Hà Nội
+    fetchWeather(cities["Hanoi"][0], cities["Hanoi"][1], "Hanoi");
+    updateDate();
+  </script>
+</body>
+
+</html>
