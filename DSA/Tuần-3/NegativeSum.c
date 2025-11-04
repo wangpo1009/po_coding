@@ -22,12 +22,12 @@ void initializeArr(int arr[], int n, int min, int max){
     }    
 }
 
-float average(int arr[], int n){
+float average(int arr[], int n, int k){
     int sum;
     for(int i = 0; i < n; i++){
-        sum += arr[i];
+        sum += i * arr[i];
     }    
-    return sum/n;
+    return sum/k;
 }
 
 int main() {
@@ -51,14 +51,14 @@ int main() {
             freq[ass]++;
         }
         
-        float ave = average(freq, n);
+        float ave = average(freq, 13, k[i]);
         
         printf("k = %d\n", k[i]);
         printf("Comps\n");
         for(int j = 0; j < 13; j++){
             printf("%d\n", freq[j]);
         }
-        printf("Mean = %.4f\n", ave);
+        printf("Mean = %.4f", ave);
         printf("====================================\n");
     }
 
