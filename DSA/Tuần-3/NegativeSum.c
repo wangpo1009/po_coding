@@ -23,11 +23,11 @@ void initializeArr(int arr[], int n, int min, int max){
 }
 
 float average(int arr[], int n, int k){
-    int sum;
+    float sum = 0;
     for(int i = 0; i < n; i++){
-        sum += i * arr[i];
+        sum += (float)i * arr[i];
     }    
-    return sum/k;
+    return sum/(float)k;
 }
 
 int main() {
@@ -64,3 +64,4 @@ int main() {
 
     return 0;
 }
+
