@@ -77,4 +77,5 @@ int main(){
         printf("\nMean = %.6f\n\n", mean);
     }
     return 0;
+
 }
