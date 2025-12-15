@@ -7,10 +7,12 @@ typedef struct Stack{
     int topInd;
 }stack;
 
+// initialize new stack.
 void init(stack *s){
     s -> topInd = -1;//Điều này giống (*s).top = -1;
 }
 
+// checking if stack is empty or not
 int isEmpty(stack *s){
     if(s -> topInd == -1){
         return 1;
