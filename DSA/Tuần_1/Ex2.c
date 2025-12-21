@@ -1,11 +1,6 @@
 #include <stdio.h>
 #define MAX 100
 
-void nhapChuoi(char a[]){
-    printf("Nhap chuoi cua ban:");
-    scanf("%s",a);
-}
-
 void boInHoa(char a[]){
     for(int i = 0; a[i] != '\0'; i++){
         if(a[i] >= 'A' && a[i] <= 'Z'){
@@ -25,17 +20,27 @@ int timChuCai(char a[], char kiTu){
 
 int main(){
     char a[MAX];
-    nhapChuoi(a);
+    printf("Nhap chuoi cua ban:\n");
+    scanf("%s", a);
     boInHoa(a);
+
     char kiTu;
-    printf("Nhap ki tu can tim:");
-    scanf("%c", &kiTu);
+    printf("Nhap ki tu can tim: ");
+    scanf(" %c", &kiTu);  
+
     int index = timChuCai(a, kiTu);
     if(index != -1){
-        printf("Tim thay %c tai vi tri: %d",kiTu, index);    
+        printf("Tim thay '%c' tai vi tri: %d", kiTu, index);    
     }
     else{
         printf("Khong tim thay");
     }
     return 0;
 }
+/*
+Output:
+Nhap chuoi cua ban:
+Phong
+Nhap ki tu can tim: o
+Tim thay 'o' tai vi tri: 2
+*/
