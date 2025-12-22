@@ -1,8 +1,9 @@
 #include <stdio.h>
 
 #define MAX 100
+
 void inputArr(char arr[MAX][MAX],int n, int m){
-    for(int i = 0; i <= n; i++){
+    for(int i = 0; i < n; i++){
         fgets(arr[i],MAX,stdin);
         if(arr[i][m-1] == '\n'){
             arr[i][m-1] = '\0';
@@ -10,18 +11,14 @@ void inputArr(char arr[MAX][MAX],int n, int m){
     }
 }
 
-void printArr(char arr[MAX][MAX], int n, int m){
-    for(int i = 0; i <= n; i++){
-        printf("%s",arr[i]);
-    }
-}
+//String's length is the same in the arr 
 int str_cmp(char arrA[], char arrB[]){
     for(int i = 0; arrA[i] != '\0'; i++){
         if(arrA[i] != arrB[i]){
-            return -1;//ko giong
+            return -1;
         }
     }
-    return 1;//giong
+    return 1;
 }
 
 int searchString(char arr[MAX][MAX], int n, int m, char str[]){
@@ -38,14 +35,11 @@ int searchString(char arr[MAX][MAX], int n, int m, char str[]){
 int main(){
     char arr[MAX][MAX];
     int arrLen, charLen;
-    printf("Nhap do dai cua mang:\n");
     scanf("%d",&arrLen);
-    printf("Nhap do dai cua chuoi trong mang:\n");
     scanf("%d",&charLen);
+    getchar();
     inputArr(arr,arrLen,charLen);
-    printArr(arr,arrLen,charLen);
     char str[MAX];
-    printf("Nhap chuoi muon tim kiem:");
     fgets(str,MAX,stdin);
     if(str[charLen-1] == '\n'){
         str[charLen-1] = '\0';
@@ -59,3 +53,15 @@ int main(){
     }
     
 }
+
+/*
+4
+8
+01sd203a
+98lam780
+n1h2u3ng
+hvthaott
+hvthaott
+Tìm thay hvthaott
+ tai 3
+ */
