@@ -24,12 +24,10 @@ int main() {
     char arr[MAX];
     int index, arrLen;
     char kiTu;
-    printf("Nhap chuoi cua ban: ");
     fgets(arr, MAX, stdin);
     remove_newline(arr);         
     arrLen = str_len(arr);         
 
-    printf("Nhap ky tu va vi tri ban muon chen: ");
     scanf(" %c%d", &kiTu, &index);
 
     if (arrLen >= MAX - 1) {
@@ -50,3 +48,10 @@ int main() {
     printf("Chuoi sau khi chen la: %s\n", arr);
     return 0;
 }
+
+/*Output:
+DataStructureAndAlgorithm
+
+A 3
+Chuoi sau khi chen la: DatAaStructureAndAlgorithm
+*/
