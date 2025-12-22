@@ -72,10 +72,27 @@ int main(){
         printf("k = %d\n", k[t]);
         printf("comps: ");
         for (int j = 0; j < 11; j++) printf("%d ", j);
-        printf("\nfrequ: ");
+        printf("\nfreq: ");
         for (int j = 0; j < 11; j++) printf("%d ", freqTab[j]);
         printf("\nMean = %.6f\n\n", mean);
     }
     return 0;
 
 }
+/*
+k = 100
+comps: 0 1 2 3 4 5 6 7 8 9 10 
+freq: 0 13 24 33 30 0 0 0 0 0 0 
+Mean = 2.800000
+
+k = 1000
+comps: 0 1 2 3 4 5 6 7 8 9 10 
+freq: 0 101 222 397 280 0 0 0 0 0 0 
+Mean = 2.856000
+
+k = 10000
+comps: 0 1 2 3 4 5 6 7 8 9 10 
+freq: 0 1007 2072 3952 2969 0 0 0 0 0 0 
+Mean = 2.888300
+*/
+
