@@ -12,14 +12,14 @@ void initStack(stack *s){
     s -> top = -1;
 }
 
-int isFull(stack s){
+int isStackFull(stack s){
     if(s.top == MAX-1){
         return 1;
     }
     return 0;
 }
 
-int isEmpty(stack s){
+int isStackEmpty(stack s){
     if(s.top == -1){
         return 1
     }
@@ -27,8 +27,53 @@ int isEmpty(stack s){
 }
 
 int pop(stack *s){
-    
+  if(!isStackEmpty(*s)){
+    return s->data[(s->top)--];
+  }
+  return -1;
 }
+
+void push(stack *s, int val){
+  if(!isStackFull(*s)){
+    s->data[++(s->top)] = val;
+  }
+  return;
+}
+
+//some function to preprocessing std::queue
+void initQueue(queue *q){
+  q->head = 0;
+  q->tail = -1;
+}
+
+int isQueueFull(queue q){
+  if(q.tail == MAX-1){
+    return 1;
+  }
+  return 0;
+}
+
+int isQueueEmpty(queue q){
+  if(q.tail == -1){
+    rerturn 1;
+  }
+  return 0;
+}
+
+int get(queue *q){
+    if(!isQueueEmpty(*q)){
+      return q->data[(q->head)++];
+    }
+    return -1;
+}
+
+int put(queue *q, int val){
+  if(!isQueueFull(*q)){
+    q->data[++(q->tail)];
+  }
+  return -1;
+}
+
 //Print array from i = 0 -> i = n-1 with recursion
 void printArrUsingRecursion(int arr[], int i){
   if(i == 0){
@@ -51,7 +96,7 @@ int findElementWithRecursion(int arr[], int n, int value){
   findElementWithRecursion(arr, --n, value);
 }
 
-//
+//Print array 
 int main(){
   int arr[] = {1, 0, 0, 9, 0, 6};
   printf("Printing arr using recursion:\n");
