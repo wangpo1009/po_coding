@@ -7,7 +7,12 @@ typedef struct stack{
     int top;
 }stack;
 
-//Some function to preprocessing stack
+typedef struct queue{
+    int data[MAX];
+    int head, tail;
+}queue;
+
+//Some function to process stack
 void initStack(stack *s){
     s -> top = -1;
 }
@@ -21,7 +26,7 @@ int isStackFull(stack s){
 
 int isStackEmpty(stack s){
     if(s.top == -1){
-        return 1
+        return 1;
     }
     return 0;
 }
@@ -40,7 +45,7 @@ void push(stack *s, int val){
   return;
 }
 
-//some function to preprocessing std::queue
+//some function to process queue
 void initQueue(queue *q){
   q->head = 0;
   q->tail = -1;
@@ -55,7 +60,7 @@ int isQueueFull(queue q){
 
 int isQueueEmpty(queue q){
   if(q.tail == -1){
-    rerturn 1;
+    return 1;
   }
   return 0;
 }
@@ -67,11 +72,11 @@ int get(queue *q){
     return -1;
 }
 
-int put(queue *q, int val){
+void put(queue *q, int val){
   if(!isQueueFull(*q)){
-    q->data[++(q->tail)];
+    q->data[++(q->tail)] = val;
   }
-  return -1;
+  return ;
 }
 
 //Print array from i = 0 -> i = n-1 with recursion
@@ -96,17 +101,55 @@ int findElementWithRecursion(int arr[], int n, int value){
   findElementWithRecursion(arr, --n, value);
 }
 
-//Print array 
+//pop stack with recursion
+void popWithRecursion(stack *s, int n){
+    if(n == 0){
+        return;
+    }
+    int val = pop(s);
+    printf("pop %d: %d\n", n, val);
+    popWithRecursion(s,--n);
+}
+
+//get queue with recursion
+void getWithRecursion(queue *q, int n){
+    if(n == 0) return ;
+    int val = get(q);
+    getWithRecursion(q,--n);
+    printf("%d value: %d\n",n, val);
+}
+
+
 int main(){
   int arr[] = {1, 0, 0, 9, 0, 6};
+  //1.
   printf("Printing arr using recursion:\n");
   printArrUsingRecursion(arr, 6);
   printf("================\n");
   
+  //2.
   int el = findElementWithRecursion(arr, 6, 0);
   printf("Found 0 at %d\n", el);
   printf("================\n");
   
+  //3.1
+  int n = 20;
+  stack s;
+  initStack(&s);
+  for(int i = 0; i < n; i++){
+      push(&s, i);
+  }
+  popWithRecursion(&s,n);
+  printf("================\n");
+  
+  //3.2
+  queue q;
+  initQueue(&q);
+  for(int i = 0; i < n; i++){
+      put(&q,i);
+  }
+  getWithRecursion(&q,n);
+  printf("================\n");
   
   
   
