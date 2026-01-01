@@ -68,8 +68,33 @@ void insertAscending(linkedList* list, int val){
 //problem: delete node as the result list is in ascending order
 //assume the given list is already in ascending order
 void deleteAscending(linkedList* list, int val){
+  if(list->head == NULL){
+    printf("Empty list!\n");
+    return;
+  }
   
+  if(val == list->head->data){
+    node* temp = list->head;
+    list->head = list->head->next;
+    free(temp);
+  }
+  
+  node* current = list->head;
+  node* prev = NULL;
+  
+  while(current->next != NULL && current->next->data < val){
+    current = current->next;
+  }
+  
+  if(current->next != NULL && current->next->data == val){
+    node* temp = current->next;
+    current->next = temp->next;
+    free(temp);
+  } else {
+    printf("Can't find the element %d!\n", val);
+  }
 }
+
 int main(){
   int po[5] = {2, -5, 10, -12, 17};
   linkedList list;
@@ -79,30 +104,10 @@ int main(){
     insertAscending(&list, po[i]);
   }
   printList(&list);
+  
+  deleteAscending(&list, 5);
+  printList(&list);
   freeList(&list);
   
  return 0; 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
