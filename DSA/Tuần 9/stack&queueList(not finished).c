@@ -1,14 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+//problem: implement a stack alike list with some function insert, delete, print.
 typedef struct node{
   int data;
   struct node* next;
 }node;
 
-typedef struct linkedList{
-  node* head;
-}linkedList;
+typedef struct stackList{
+  node* top;
+}stackList;
 
 node* createNode(int data){
   node* newNode = (node*)malloc(sizeof(node));
@@ -29,7 +29,7 @@ void freeList(linkedList* list){
   list->head = NULL;
 }
 
-
+void initList()
 int main(){
   
   return 0;
