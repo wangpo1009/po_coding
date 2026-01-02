@@ -59,6 +59,7 @@ int getList(queueList* list){
   }
   node* temp = list->head;
   int val = list->head->data;
+  list->head = temp->next;
   
   if(list->head != NULL){
     list->head->prev = NULL;
@@ -71,6 +72,44 @@ int getList(queueList* list){
   return val;
 }
 
-int main(){
+void printList(queueList* list){
+  node* current = list->head;
   
+  printf("NULL");
+  while(current != NULL){
+    printf(" <-> %d", current->data);
+    current = current->next;
+  }
+  printf(" <-> NULL\n");
 }
+
+
+int main(){
+  int po[4] = {1,0,0,9};
+  queueList list;
+  initList(&list);
+  
+  for(int i = 0; i < 4; i++){
+    putList(&list, po[i]);
+  }
+  printList(&list);
+  
+  int val = getList(&list);
+  printf("List after getting %d : ",val);
+  printList(&list);
+  
+  freeList(&list);
+  return 0;
+}
+
+
+/*
+Output:
+
+NULL <-> 1 <-> 0 <-> 0 <-> 9 <-> NULL
+List after getting 1 : NULL <-> 0 <-> 0 <-> 9 <-> NULL
+*/
+
+
+
+
