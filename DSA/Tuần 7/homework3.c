@@ -1,6 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
 
 #define MAX 20
 
@@ -32,33 +30,35 @@ int pop(stack* s){
 }
 
 void pushUntil_1(stack* s, int arr[], int n){
-  if(arr[n] == 1){
+    if(n < 0){
+        return; // there's no 1
+    }
+
+    if(arr[n] == 1){
+        push(s, 1);
+        return;
+    }
+
+    pushUntil_1(s, arr, n - 1);
     push(s, arr[n]);
-    return; 
-  }
-  if(n == 0){
-    return ;//there's no 1
-  }
-  
-  push(s, arr[n]);
-  pushUntil_1(s, arr, --n);
 }
+
 /*
 base case: when n== 0 or arr[n]==1
 base case returns:
     if arr[n]==1: push arr[n] and return
     if n==0: return
 before base case:
-    (1)push arr[n]
-    (2)call pushUntil_1 with n-1
+    (1)call pushUntil_1 with n-1
         ->base case
-before before
-    (1)push arr[n]
-    (2)call pushUntil_1 with n-1
-        ->(1)push arr[n]
+    (2)push arr[n]
+before before:
+    (1)call pushUntil_1 with n-1
         ->call pushUntil_1 with n-2
-            ...
-                ->base case
+        ->push arr[n-2]
+    (2)push arr[n-1]
+    (3)push arr[n]
+
 
 */
 
@@ -77,33 +77,12 @@ void popAndSumUntil_1(stack* s, int* sum){
     (*sum) += val;
     popAndSumUntil_1(s, sum);
 }
-/*
-base case: when stack is empty or popped value is 1
-base case returns:
-    if stack is empty: return
-    if popped value is 1: add 1 to sum and return
-before base case:
-    (1)pop value
-    (2)add value to sum
-    (3)call popAndSumUntil_1
-        ->base case
-before before
-    (1)pop value
-    (2)add value to sum
-    (3)call popAndSumUntil_1
-        ->(1)pop value
-        ->(2)add value to sum
-        ->call popAndSumUntil_1
-            ...
-                ->base case
-*/
+
 void printStack(stack* s){
-    int i = 0;
-    while( s->data[i] != 1 && i <= MAX-1){
-    printf("%d > ", s->data[i]);
-    i++;
-    }
-    printf("1");  
+    
+    for(int i = s->top; i != -1; i--){
+      printf("%d > ", s->data[i]);
+    }  
 }
 
 int main(){
@@ -120,3 +99,7 @@ int main(){
     return 0;
 }
 
+/*
+10 > 7 > 9 > 8 > 4 > 3 > 4 > 7 > 1 > 
+Sum until 1: 53
+*/
