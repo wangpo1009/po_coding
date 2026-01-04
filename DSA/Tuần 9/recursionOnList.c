@@ -40,7 +40,23 @@ node* createNode(int val){
 }
 
 //insert linked list using recursion
-void insertAtPosition(linkedList* list, int pos, int n){
+void insertAtPosition(linkedList* list, int pos, int val, int n){
+  if(list->head == NULL && pos != 0){
+    printf("Invalid position!\n");
+    return;
+  }
+  
+  if(list->head == NULL){
+    node* newNode = createNode(val);
+    list->head = newNode;
+    return;
+  }
+  
+  if(n == pos-1){
+    node* current
+  }
+  node* current = list->head;
+  
   
 }
 
