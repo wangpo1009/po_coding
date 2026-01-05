@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -40,26 +41,28 @@ node* createNode(int val){
 }
 
 //insert linked list using recursion
-void insertAtPosition(linkedList* list, int pos, int val, int n){
-  if(list->head == NULL && pos != 0){
-    printf("Invalid position!\n");
-    return;
-  }
-  
-  if(list->head == NULL){
-    node* newNode = createNode(val);
-    list->head = newNode;
-    return;
-  }
-  
-  if(n == pos-1){
-    node* current
-  }
-  node* current = list->head;
-  
-  
+void insertAtPosition(linkedList* list, node* current, int pos, int val, int n){
+    if(current == NULL){
+        printf("Invalid position!\n");
+        return;
+    }
+
+    if(n == pos - 1){
+        node* newNode = createNode(val);
+        newNode->next = current->next;
+        current->next = newNode;
+        return;
+    }
+
+    insertAtPosition(list, current->next, pos, val, n + 1);
 }
 
+//delete node using recursion
+void deleteAtPosition(linkedList* list, node* current, int pos, int val, int n){
+  if(current == NULL){
+    
+  }
+}
 
 
 int main(){
