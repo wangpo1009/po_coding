@@ -107,9 +107,6 @@ void inputGroup(memberList* list, char group[], int n){
   }
 }
 
-void printMemberInformation(memberList* list){
-  
-}
 
 //======================= CHECK-IN FUNC =================================
 void checkinLeader(memberNode* member, room hotel[MAX_FLOOR][MAX_ROOM]){
@@ -161,11 +158,38 @@ void checkinGroup(memberList* list, room hotel[MAX_FLOOR][MAX_ROOM]){
 void checkingStatus(room hotel[MAX_FLOOR][MAX_ROOM]){
   for(int i = 0; i < MAX_FLOOR; i++){
     for(int j = 0; j < MAX_ROOM; j++){
-      printf("Floor: %d | Room: %d | Status: %d | CustomerName: %c \n", 
-        i, j, hotel[i][j].status, hotel[i][j].customerName);
+      printf("Floor: %d | Room: %d / RoomAddress: %p| Status: %d | CustomerName: %c\n", 
+        i, j, &hotel[i][j], hotel[i][j].status, hotel[i][j].customerName);
     }
   }
 }
+
+//========================== RECEPTIONIST FUNCTION ========================================
+//problem state that if we know the leader address we can print or output all other member's information in that
+//group.
+//But the address in computing is changing continuosly so in theory we cannot know the address of
+//the leader, so i choose the easy way
+
+void printInformation(memberNode* member){
+  printf("MemberName: %c | Floor: %d | Room: %d | RoomAddress: %p\n",
+    member->name, member->floor, member->room, member->roomAddress);
+}
+
+void printListInformation(memberList* list){
+  if(list->leader == NULL){
+    printf("Invalid list!\n");
+    return ;
+  }
+  
+  memberNode* current = list->leader;
+  
+  while(current != NULL){
+    printInformation(current);
+    current = current->next;
+  }
+  
+}
+
 
 
 int main() {
@@ -184,37 +208,13 @@ int main() {
     
     inputGroup(&list1, group1, 7);
     checkinGroup(&list1, poHotel);
+    
+    printListInformation(&list1);
     freeList(&list1);
     
     
-    checkingStatus(poHotel);
     return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
