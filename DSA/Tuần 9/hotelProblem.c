@@ -154,15 +154,33 @@ void checkinGroup(memberList* list, room hotel[MAX_FLOOR][MAX_ROOM]){
     return ;
 }
 
-
-void checkingStatus(room hotel[MAX_FLOOR][MAX_ROOM]){
-  for(int i = 0; i < MAX_FLOOR; i++){
-    for(int j = 0; j < MAX_ROOM; j++){
-      printf("Floor: %d | Room: %d / RoomAddress: %p| Status: %d | CustomerName: %c\n", 
-        i, j, &hotel[i][j], hotel[i][j].status, hotel[i][j].customerName);
-    }
+void newMemberCheckin(memberList* list, room hotel[MAX_FLOOR][MAX_ROOM], char newName){
+  if(list->leader == NULL){
+    inputMember(list, newName);
+    checkinLeader(list->leader, hotel);
+    return;
   }
+  
+  inputMember(list, newName);// input at the end of list
+  
+  memberNode* current = list->leader;
+  while(current->next != NULL){
+    current = current->next;//go to the last person in the list
+  }
+  checkinPerson(current, hotel);
+  
 }
+
+//========================== CHECK-OUT FUNCTION ===========================================
+//để check out thì xóa thông tin phòng, 
+void checkoutPerson(memberList* list, room hotel[MAX_FLOOR][MAX_ROOM]){
+  
+  
+}
+
+
+
+
 
 //========================== RECEPTIONIST FUNCTION ========================================
 //problem state that if we know the leader address we can print or output all other member's information in that
@@ -190,6 +208,14 @@ void printListInformation(memberList* list){
   
 }
 
+void checkingStatus(room hotel[MAX_FLOOR][MAX_ROOM]){
+  for(int i = 0; i < MAX_FLOOR; i++){
+    for(int j = 0; j < MAX_ROOM; j++){
+      printf("Floor: %d | Room: %d / RoomAddress: %p| Status: %d | CustomerName: %c\n", 
+        i, j, &hotel[i][j], hotel[i][j].status, hotel[i][j].customerName);
+    }
+  }
+}
 
 
 int main() {
@@ -208,15 +234,10 @@ int main() {
     
     inputGroup(&list1, group1, 7);
     checkinGroup(&list1, poHotel);
-    
+    newMemberCheckin(&list1, poHotel, 'P');
     printListInformation(&list1);
     freeList(&list1);
     
     
     return 0;
 }
-
-
-
-
-
