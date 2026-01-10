@@ -172,9 +172,31 @@ void newMemberCheckin(memberList* list, room hotel[MAX_FLOOR][MAX_ROOM], char ne
 }
 
 //========================== CHECK-OUT FUNCTION ===========================================
-//để check out thì xóa thông tin phòng, 
-void checkoutPerson(memberList* list, room hotel[MAX_FLOOR][MAX_ROOM]){
+//để check out thì xóa thông tin phòng
+void checkoutPerson(memberNode* member, room hotel[MAX_FLOOR][MAX_ROOM]){
+  if(member == NULL){
+    return ;
+  }
   
+  hotel[member->floor][member->room].status = 0;
+  hotel[member->floor][member->room].customerName = '\0';
+  
+  member->floor = member->room = -1;
+  member->roomAddress = NULL;
+  
+}
+
+void checkoutGroup(memberList* list, room hotel[MAX_FLOOR][MAX_ROOM]){
+  if(list->leader == NULL){
+    return ;
+  }
+  
+  memberNode* current = list->leader;
+  
+  while(current != NULL){
+    checkoutPerson(current, hotel);
+    current = current->next;
+  }
   
 }
 
@@ -236,6 +258,12 @@ int main() {
     checkinGroup(&list1, poHotel);
     newMemberCheckin(&list1, poHotel, 'P');
     printListInformation(&list1);
+    
+    printf("\n");
+    checkingStatus(poHotel);
+    checkoutGroup(&list1, poHotel);
+    printListInformation(&list1);
+    checkingStatus(poHotel);
     freeList(&list1);
     
     
