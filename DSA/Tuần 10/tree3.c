@@ -1,5 +1,5 @@
 /*
-tree 1: level ordered tree
+tree 3:
 */
 #include <stdio.h>
 #include <stdlib.h>
