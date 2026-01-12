@@ -63,8 +63,8 @@ void freeTree(TreeNode** current){
     return;
   }
   
-  freeTree((*current)->left);
-  freeTree((*current)->right);
+  freeTree(&(*current)->left);
+  freeTree(&(*current)->right);
   free(*current);
 }
 
@@ -80,7 +80,7 @@ void printTree(TreeNode* root, int space, char branch){
   // In node hiện tại
   printf("\n");
   for(int i = SPACE; i < space; i++){
-    printf(" ");
+    printf("  ");
   }
 
   if(branch == '/')
@@ -140,3 +140,36 @@ int main()
     freeTree(&tree.root);
     return 0;
 }
+/*
+           ↗ 15
+
+        ↗ 7
+
+            ↘ 14
+
+    ↗ 3
+
+            ↗ 13
+
+        ↘ 6
+
+            ↘ 12
+
+1
+
+            ↗ 11
+
+        ↗ 5
+
+            ↘ 10
+
+    ↘ 2
+
+            ↗ 9
+
+        ↘ 4
+
+            ↘ 8
+
+                ↘ 16
+*/
