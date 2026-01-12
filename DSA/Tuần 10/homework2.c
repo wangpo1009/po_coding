@@ -203,10 +203,10 @@ TreeNode* deleteNodeSearchTree(TreeNode* root, int val){
   if(root == NULL) return NULL;
 
   if(val < root->data){
-    root->left = deleteNode(root->left, val);
+    root->left = deleteNodeSearchTree(root->left, val);
   }
   else if(val > root->data){
-    root->right = deleteNode(root->right, val);
+    root->right = deleteNodeSearchTree(root->right, val);
   }
   else{
     // Case 1 & 2: 0 hoặc 1 con
@@ -224,7 +224,7 @@ TreeNode* deleteNodeSearchTree(TreeNode* root, int val){
     // Case 3: 2 con
     TreeNode* successor = findMin(root->right);
     root->data = successor->data;
-    root->right = deleteNode(root->right, successor->data);
+    root->right = deleteNodeSearchTree(root->right, successor->data);
   }
   return root;
 }
@@ -232,14 +232,45 @@ TreeNode* deleteNodeSearchTree(TreeNode* root, int val){
 
 int main()
 {
-    BinaryTree tree;
-    initTree(&tree);
-    int po[MAX] = {15, 11, 26, 8, 12, 20, 30, 6, 9, 14, 35};
-    for(int i = 0; i < 11; i++){
-      insertSearchTree(&tree.root, po[i]);
+    BinaryTree tree1, tree2, tree3, tree4;
+    initTree(&tree1);
+    initTree(&tree2);
+    initTree(&tree3);
+    initTree(&tree4);
+    
+    //insert tree1
+    for(int i = 0; i < 16; i++){
+      insertLevelOrederedTree(&tree1.root, i+1);
     }
     
-    printf("Node address: %p ", searchSearchTree(tree.root, 35));
-    freeTree(&tree.root);
+    //insert tree2
+    int po1[MAX] = {50, 17, 76, 9, 23, 54, 14, 19, 72, 12, 67};
+    for(int i = 0; i < 11; i++){
+      insertSearchTree(&tree2.root, po1[i]);
+    }
+    
+    //insert tree 2
+    int po2[MAX] = {15, 11, 26, 8, 12, 20, 30, 6, 9, 14, 35};
+    for(int i = 0; i < 11; i++){
+      insertSearchTree(&tree3.root, po2[i]);
+    }
+    
+    //insert tree 4 
+    int po[MAX] = {
+      3, 
+      1, 10, 
+      13, 5, 11, 16,
+      NULL, NULL, 6, NULL, NULL, NULL, 15, 2,
+      NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 9, 4, NULL, NULL
+    };
+    for(int  i = 0; i < 31; i++){
+      insertLevelOrederedTree(&tree4.root, po[i]);
+    }
+    
+    
+    freeTree(&tree1.root);
+    freeTree(&tree2.root);
+    freeTree(&tree3.root);
+    freeTree(&tree4.root);
     return 0;
 }
