@@ -80,10 +80,10 @@ void insertTree(TreeNode** root, int inVal){
   }
   
   if((*root)->data < inVal){
-    insertTree(&(*root)->left, inVal);
+    insertTree(&(*root)->right, inVal);
   }
   if((*root)->data > inVal){
-    insertTree(&(*root)->right, inVal);
+    insertTree(&(*root)->left, inVal);
   }
 }
 
