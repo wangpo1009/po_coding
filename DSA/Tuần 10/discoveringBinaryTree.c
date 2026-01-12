@@ -192,7 +192,44 @@ TreeNode* searchSearchTree(TreeNode* root, int val){
 
 }
 
-//====================================== DELETE ===============================
+//====================================== DELETE =================================
+TreeNode* findMin(TreeNode* root){
+  while(root->left != NULL)
+    root = root->left;
+  return root;
+}
+
+TreeNode* deleteNodeSearchTree(TreeNode* root, int val){
+  if(root == NULL) return NULL;
+
+  if(val < root->data){
+    root->left = deleteNode(root->left, val);
+  }
+  else if(val > root->data){
+    root->right = deleteNode(root->right, val);
+  }
+  else{
+    // Case 1 & 2: 0 hoặc 1 con
+    if(root->left == NULL){
+      TreeNode* temp = root->right;
+      free(root);
+      return temp;
+    }
+    else if(root->right == NULL){
+      TreeNode* temp = root->left;
+      free(root);
+      return temp;
+    }
+
+    // Case 3: 2 con
+    TreeNode* successor = findMin(root->right);
+    root->data = successor->data;
+    root->right = deleteNode(root->right, successor->data);
+  }
+  return root;
+}
+
+
 int main()
 {
     BinaryTree tree;
