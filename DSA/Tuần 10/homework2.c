@@ -230,6 +230,20 @@ TreeNode* deleteNodeSearchTree(TreeNode* root, int val){
 }
 
 
+//================================= LEVELS COUNT ===========================================
+
+void printLevel(TreeNode* root, int currentLevel, int targetLevel){
+    if(root == NULL) return;
+
+    if(currentLevel == targetLevel){
+        printf("%d ", root->data);
+        return;
+    }
+
+    printLevel(root->left, currentLevel + 1, targetLevel);
+    printLevel(root->right, currentLevel + 1, targetLevel);
+}
+
 int main()
 {
     BinaryTree tree1, tree2, tree3, tree4;
@@ -238,24 +252,34 @@ int main()
     initTree(&tree3);
     initTree(&tree4);
     
-    //insert tree1
+    //tree1
+    printf("TREE 1:");
     for(int i = 0; i < 16; i++){
       insertLevelOrederedTree(&tree1.root, i+1);
     }
+    printLevel(tree1.root, 0, 3);
+    printf("\n");
     
-    //insert tree2
+    //tree2
+    printf("TREE 2:");
     int po1[MAX] = {50, 17, 76, 9, 23, 54, 14, 19, 72, 12, 67};
     for(int i = 0; i < 11; i++){
       insertSearchTree(&tree2.root, po1[i]);
     }
+    printLevel(tree2.root, 0, 3);
+    printf("\n");
     
-    //insert tree 2
+    //tree 2
+    printf("TREE 3:");
     int po2[MAX] = {15, 11, 26, 8, 12, 20, 30, 6, 9, 14, 35};
     for(int i = 0; i < 11; i++){
       insertSearchTree(&tree3.root, po2[i]);
     }
+    printLevel(tree3.root, 0, 3);
+    printf("\n");
     
-    //insert tree 4 
+    //tree 4 
+    printf("TREE 4:");
     int po[MAX] = {
       3, 
       1, 10, 
@@ -266,7 +290,8 @@ int main()
     for(int  i = 0; i < 31; i++){
       insertLevelOrederedTree(&tree4.root, po[i]);
     }
-    
+    printLevel(tree4.root, 0, 3);
+    printf("\n");
     
     freeTree(&tree1.root);
     freeTree(&tree2.root);
@@ -274,3 +299,10 @@ int main()
     freeTree(&tree4.root);
     return 0;
 }
+
+/*
+TREE 1:8 9 10 11 12 13 14 15 
+TREE 2:14 19 72 
+TREE 3:6 9 14 35 
+TREE 4:0 0 6 0 0 0 15 2 
+*/
