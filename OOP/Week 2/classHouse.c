@@ -14,6 +14,7 @@ class House{
     this->setAddress(address);
     this->setTheNumberOfRoom(theNumberOfRoom);
   }
+House(string address) : House(address, theNumberOfRoom = 0){}
   
   void setTheNumberOfRoom(int theNumberOfRoom){
     this->theNumberOfRoom = theNumberOfRoom;
