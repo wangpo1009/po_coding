@@ -39,4 +39,4 @@ class Student{
   string getMatriculationNumber(){
     return this->mmatriculationNumber;
   }
-}
+};
