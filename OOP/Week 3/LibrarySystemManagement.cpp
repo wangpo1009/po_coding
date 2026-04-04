@@ -3,10 +3,83 @@
 #include <vector>
 #include <algorithm>
 
-using namespace std;
-
-// 1. Forward Declaration
 class BorrowerRecord;
+class BorrowerRecord;
+class Library;
+
+class Library{
+  string name;
+  vector <BorrowerRecord*> BorrowerList;
+  vector <Book*> Stock;
+  
+  public:
+  Library(string name) { this->setName(name); }
+  
+  void setName(string name) { this->name = name; }
+  
+  string getName() { return name; }
+  vector <Book*> getStock() { return Stock; }
+  vector <BorrowerRecord*> getBorrowerRecord() { return BorrowerList; }
+  
+  void registerOneBorrower(string borrowerName) {
+    BorrowerList.push_back(new BorrowerRecord(borrowerName));
+    printf("SUCCESS!\n");
+  }
+  
+  void addOneBook(string CatalogueNumber, string Author, string Title) {
+    Stock.push_back(new Book(CatalogueNumber, Author, Title));
+    printf("SUCCESS!\n");
+  }
+  
+  void displayBooksAvailable(){
+    for(auto i : this->getStock){
+      if(i->getBorrower() == nullptr){
+        i.display();
+      }
+    }
+  }
+  
+  void displayBookOnLoan(){
+    for(auto i : this->getStock){
+      if(i->getBorrower() != nullptr){
+        i.display();
+      }
+    }
+  }
+  
+  
+  void lendOneBook(string CatalogueNumber, string BorrowerName){
+    Book* b = nullptr;
+    BorrowerRecord* borrower = nullptr;
+
+    for(auto i : this->getStock()){
+        if(i->getCatalogueNumber() == CatalogueNumber){
+            b = i;
+            break;
+        }
+    }
+
+    for(auto i : this->getBorrowerList()){
+        if(i->getName() == BorrowerName){
+            borrower = i;
+            break;
+        }
+    }
+
+    if(b != nullptr && borrower != nullptr && b->getBorrower() == nullptr){
+        borrower->attachBook(b);
+    }
+}
+  
+  void returnOneBook(string CatalogueNumber) {
+    for(auto i : getStock()){
+      if(i->getCatalogueNumber == CatalogueNumber){
+        i.detachBook
+      }
+    }
+  }
+  
+};
 
 class Book {
 private:
@@ -35,6 +108,7 @@ public:
     BorrowerRecord* getBorrower() { return borrower; }
     
     void attachBorrower(BorrowerRecord* b) { this->borrower = b; }
+    void dettachBorrower(){ this->borrower = nullptr; }
 
     // Chỉ khai báo, định nghĩa ở cuối file
     void display();
@@ -95,25 +169,7 @@ void Book::display() {
     cout << "--------------------------\n";
 }
 
-int main() {
-    Book b1("B001", "To Hoai", "De Men Phieu Luu Ky");
-    Book b2("B002", "Nam Cao", "Chi Pheo");
-    BorrowerRecord user("Nguyen Van A");
-
-    // 1. Mượn sách
-    user.attachBook(&b1);
-    user.attachBook(&b2);
-    
-    cout << "SAU KHI MUON:\n";
-    b1.display();
-    user.displayBorrowedBooks();
-
-    // 2. Trả sách
-    user.detachBook(&b1);
-    
-    cout << "SAU KHI TRA SACH B001:\n";
-    b1.display();
-    user.displayBorrowedBooks();
-
-    return 0;
+int main(){
+  
+  return 0;
 }
