@@ -3,83 +3,11 @@
 #include <vector>
 #include <algorithm>
 
+using namespace std;
+
 class BorrowerRecord;
-class BorrowerRecord;
+class Book;
 class Library;
-
-class Library{
-  string name;
-  vector <BorrowerRecord*> BorrowerList;
-  vector <Book*> Stock;
-  
-  public:
-  Library(string name) { this->setName(name); }
-  
-  void setName(string name) { this->name = name; }
-  
-  string getName() { return name; }
-  vector <Book*> getStock() { return Stock; }
-  vector <BorrowerRecord*> getBorrowerRecord() { return BorrowerList; }
-  
-  void registerOneBorrower(string borrowerName) {
-    BorrowerList.push_back(new BorrowerRecord(borrowerName));
-    printf("SUCCESS!\n");
-  }
-  
-  void addOneBook(string CatalogueNumber, string Author, string Title) {
-    Stock.push_back(new Book(CatalogueNumber, Author, Title));
-    printf("SUCCESS!\n");
-  }
-  
-  void displayBooksAvailable(){
-    for(auto i : this->getStock){
-      if(i->getBorrower() == nullptr){
-        i.display();
-      }
-    }
-  }
-  
-  void displayBookOnLoan(){
-    for(auto i : this->getStock){
-      if(i->getBorrower() != nullptr){
-        i.display();
-      }
-    }
-  }
-  
-  
-  void lendOneBook(string CatalogueNumber, string BorrowerName){
-    Book* b = nullptr;
-    BorrowerRecord* borrower = nullptr;
-
-    for(auto i : this->getStock()){
-        if(i->getCatalogueNumber() == CatalogueNumber){
-            b = i;
-            break;
-        }
-    }
-
-    for(auto i : this->getBorrowerList()){
-        if(i->getName() == BorrowerName){
-            borrower = i;
-            break;
-        }
-    }
-
-    if(b != nullptr && borrower != nullptr && b->getBorrower() == nullptr){
-        borrower->attachBook(b);
-    }
-}
-  
-  void returnOneBook(string CatalogueNumber) {
-    for(auto i : getStock()){
-      if(i->getCatalogueNumber == CatalogueNumber){
-        i.detachBook
-      }
-    }
-  }
-  
-};
 
 class Book {
 private:
@@ -90,17 +18,18 @@ private:
 
 public:
     Book(string CatalogueNumber, string Author, string Title) {
-        this->CatalogueNumber = CatalogueNumber;
-        this->Author = Author;
-        this->Title = Title;
-        this->borrower = nullptr; // Cực kỳ quan trọng: Khởi tạo giá trị rỗng
+        this->setCatalogueNumber(CatalogueNumber);
+        this->setAuthor(Author);
+        this->setTitle(Title);
+        this->setBorrower(nullptr); 
     }
 
     Book() : Book("", "", "") {}
 
-    void setCatalogueNumber(string cn) { CatalogueNumber = cn; }
-    void setAuthor(string a) { Author = a; }
-    void setTitle(string t) { Title = t; }
+    void setCatalogueNumber(string cn) { this->CatalogueNumber = cn; }
+    void setAuthor(string a) { this->Author = a; }
+    void setTitle(string t) { this->Title = t; }
+    void setBorrower(BorrowerRecord *borrower){ this->borrower = borrower; }
 
     string getCatalogueNumber() { return CatalogueNumber; }
     string getAuthor() { return Author; }
@@ -155,6 +84,80 @@ public:
     }
 };
 
+class Library{
+  string name;
+  vector <BorrowerRecord*> BorrowerList;
+  vector <Book*> Stock;
+  
+  public:
+  Library(string name) { this->setName(name); }
+  
+  void setName(string name) { this->name = name; }
+  
+  string getName() { return name; }
+  vector <Book*> getStock() { return Stock; }
+  vector <BorrowerRecord*> getBorrowerRecord() { return BorrowerList; }
+  
+  void registerOneBorrower(string borrowerName) {
+    BorrowerList.push_back(new BorrowerRecord(borrowerName));
+    printf("SUCCESS!\n");
+  }
+  
+  void addOneBook(string CatalogueNumber, string Author, string Title) {
+    Stock.push_back(new Book(CatalogueNumber, Author, Title));
+    printf("SUCCESS!\n");
+  }
+  
+  void displayBooksAvailable(){
+    for(auto i : this->getStock()){
+      if(i->getBorrower() == nullptr){
+        i->display();
+      }
+    }
+  }
+  
+  void displayBookOnLoan(){
+    for(auto i : this->getStock()){
+      if(i->getBorrower() != nullptr){
+        i->display();
+      }
+    }
+  }
+  
+  
+  void lendOneBook(string CatalogueNumber, string BorrowerName){
+    Book* b = nullptr;
+    BorrowerRecord* borrower = nullptr;
+
+    for(auto i : this->getStock()){
+        if(i->getCatalogueNumber() == CatalogueNumber){
+            b = i;
+            break;
+        }
+    }
+
+    for(auto i : this->getBorrowerRecord()){
+        if(i->getName() == BorrowerName){
+            borrower = i;
+            break;
+        }
+    }
+
+    if(b != nullptr && borrower != nullptr && b->getBorrower() == nullptr){
+        borrower->attachBook(b);
+    }
+}
+  
+  void returnOneBook(string CatalogueNumber) {
+    for(auto i : this->getStock()){
+      if(i->getCatalogueNumber() == CatalogueNumber){
+        i->dettachBorrower();
+      }
+    }
+  }
+  
+};
+
 // 2. Định nghĩa display() sau khi BorrowerRecord đã hoàn tất
 void Book::display() {
     cout << "Ten sach: " << Title << "\n";
@@ -170,6 +173,9 @@ void Book::display() {
 }
 
 int main(){
+  hcmus.display();
+  hcmus.registerOneBorrower("Chris");
+  hcmus.registerOneBorrower("Elton");
   
   return 0;
 }
