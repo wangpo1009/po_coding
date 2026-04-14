@@ -36,7 +36,7 @@ public:
     string getTitle() { return Title; }
     BorrowerRecord* getBorrower() { return borrower; }
     
-    void attachBorrower(BorrowerRecord* b) { this->borrower = b; }
+    void attachBorrower(BorrowerRecord* b) { setBorrower(b); }
     void dettachBorrower(){ this->borrower = nullptr; }
 
     // Chỉ khai báo, định nghĩa ở cuối file
@@ -50,6 +50,7 @@ private:
 
 public:
     BorrowerRecord(string name) { this->name = name; }
+    BorrowerRecord() : BorrowerRecord(" "){}
 
     void setName(string name) { this->name = name; }
     string getName() { return name; }
@@ -72,7 +73,7 @@ public:
     }
 
     void displayBorrowedBooks() {
-        cout << "--- Danh sach muon cua: " << name << " ---\n";
+        cout << "--- Danh sach muon cua: " << this->getName() << " ---\n";
         if (books.empty()) {
             cout << "(Trong)\n";
         } else {
@@ -125,7 +126,7 @@ class Library{
   }
   
   
-  void lendOneBook(string CatalogueNumber, string BorrowerName){
+void lendOneBook(string CatalogueNumber, string BorrowerName){
     Book* b = nullptr;
     BorrowerRecord* borrower = nullptr;
 
@@ -173,9 +174,29 @@ void Book::display() {
 }
 
 int main(){
-  hcmus.display();
-  hcmus.registerOneBorrower("Chris");
-  hcmus.registerOneBorrower("Elton");
+  Library hcmus("HCMUS Library");
+
+
+    hcmus.addOneBook("B01", "J.K. Rowling", "Harry Potter");
+    hcmus.addOneBook("B02", "J.R.R. Tolkien", "The Hobbit");
+    hcmus.registerOneBorrower("Chris");
+    hcmus.registerOneBorrower("Elton");
+  printf("\n");
+ 
+    hcmus.displayBooksAvailable();
+    hcmus.lendOneBook("B01", "Chris");//Sai chỗ này
+    
+  printf("\n");
+  
+    
+    hcmus.displayBooksAvailable();
+    
+  printf("\n");
+    
+    hcmus.returnOneBook("B01");
+    hcmus.displayBooksAvailable();
+
+    return 0;
   
   return 0;
 }
