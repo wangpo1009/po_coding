@@ -9,6 +9,8 @@ class BorrowerRecord;
 class Book;
 class Library;
 
+
+//======================= BOOK ==========================
 class Book {
 private:
     string CatalogueNumber;
@@ -17,6 +19,7 @@ private:
     BorrowerRecord* borrower;
 
 public:
+// Constructor
     Book(string CatalogueNumber, string Author, string Title) {
         this->setCatalogueNumber(CatalogueNumber);
         this->setAuthor(Author);
@@ -26,36 +29,42 @@ public:
 
     Book() : Book("", "", "") {}
 
+// Setter
     void setCatalogueNumber(string cn) { this->CatalogueNumber = cn; }
     void setAuthor(string a) { this->Author = a; }
     void setTitle(string t) { this->Title = t; }
     void setBorrower(BorrowerRecord *borrower){ this->borrower = borrower; }
 
+// Getter
     string getCatalogueNumber() { return CatalogueNumber; }
     string getAuthor() { return Author; }
     string getTitle() { return Title; }
     BorrowerRecord* getBorrower() { return borrower; }
     
+// Inner Function
     void attachBorrower(BorrowerRecord* b) { setBorrower(b); }
     void dettachBorrower(){ this->borrower = nullptr; }
 
-    // Chỉ khai báo, định nghĩa ở cuối file
+// Chỉ khai báo, định nghĩa ở cuối file
     void display();
 }; 
 
+//===================== BORROWER RECORD =============================
 class BorrowerRecord {
 private:
     string name;
     vector<Book*> books;
 
 public:
+// Constructor
     BorrowerRecord(string name) { this->name = name; }
     BorrowerRecord() : BorrowerRecord(" "){}
 
+// Getter & Setter
     void setName(string name) { this->name = name; }
     string getName() { return name; }
 
-    // Cập nhật 2 chiều để dữ liệu đồng bộ
+// Inner Func
     void attachBook(Book* b) {
         if (b != nullptr && b->getBorrower() == nullptr) {
             books.push_back(b);
@@ -63,7 +72,6 @@ public:
         }
     }
     
-    // Trả sách
     void detachBook(Book* b) {
         auto it = find(books.begin(), books.end(), b); // So sánh con trỏ trực tiếp
         if (it != books.end()) {
@@ -85,20 +93,34 @@ public:
     }
 };
 
+
+//======================== LIBRARY ============================
 class Library{
   string name;
   vector <BorrowerRecord*> BorrowerList;
   vector <Book*> Stock;
   
   public:
+// Constructor
   Library(string name) { this->setName(name); }
   
+// Destructor
+  ~Library(){
+    this->Stock.clear();
+    for(auto i : this->getBorrowerList()) {
+      delete(i);
+    }
+    this->BorrowerList.clear();
+  }
+  
+// Getter & Setter
   void setName(string name) { this->name = name; }
   
   string getName() { return name; }
   vector <Book*> getStock() { return Stock; }
-  vector <BorrowerRecord*> getBorrowerRecord() { return BorrowerList; }
-  
+  vector <BorrowerRecord*> getBorrowerList() { return BorrowerList; }
+
+// Inner Func
   void registerOneBorrower(string borrowerName) {
     BorrowerList.push_back(new BorrowerRecord(borrowerName));
     printf("SUCCESS!\n");
@@ -137,7 +159,7 @@ void lendOneBook(string CatalogueNumber, string BorrowerName){
         }
     }
 
-    for(auto i : this->getBorrowerRecord()){
+    for(auto i : this->getBorrowerList()){
         if(i->getName() == BorrowerName){
             borrower = i;
             break;
@@ -184,19 +206,16 @@ int main(){
   printf("\n");
  
     hcmus.displayBooksAvailable();
-    hcmus.lendOneBook("B01", "Chris");//Sai chỗ này
+    hcmus.lendOneBook("B01", "Chris");
     
   printf("\n");
   
-    
     hcmus.displayBooksAvailable();
     
   printf("\n");
     
     hcmus.returnOneBook("B01");
     hcmus.displayBooksAvailable();
-
-    return 0;
   
   return 0;
 }
