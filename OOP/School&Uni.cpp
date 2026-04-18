@@ -15,15 +15,18 @@ private:
 
 public:
     School(string name, string address) : name(name), address(address), university(nullptr) {}
-
+    School() : School(" ", " ") {}
+    
     void setName(string name) { this->name = name; }
     void setAddress(string address) { this->address = address; }
     
-    string getName() const { return name; }
-    string getAddress() const { return address; }
+    string getName() { return name; }
+    string getAddress() { return address; }
 
-    void attachUniversity(University* u) { this->university = u; }
+    void attachUniversity(University* u) { this->university = u; }//setter
     void detachUniversity() { this->university = nullptr; }
+    
+    University* getUniversity() { return this->university; }
     
     void display(){
       cout << "Ten Truong: " << this->getName() << "\n";
@@ -42,22 +45,22 @@ public:
     University() : University("VNU") {}
 
     ~University() {
-        for (auto s : schoolList) delete s;
-        schoolList.clear();
+      schoolList.clear();
     }
 
     void setName(string name) { this->name = name; }
-    string getName() const { return name; }
-
+    string getName() { return name; }
+    vector <School*> getSchoolList() { return this->schoolList; }
+    
     void attachSchool(School* newSchool) {
         schoolList.push_back(newSchool);
         newSchool->attachUniversity(this);
     }
 
     void detachSchool(School* school) {
-        auto it = find(schoolList.begin(), schoolList.end(), school);
+        auto it = find(this->getSchoolList().begin(), this->getSchoolList().end(), school);
         
-        if (it != schoolList.end()) {
+        if (it != this->getSchoolList().end()) {
             (*it)->detachUniversity(); // Gọi phương thức detach của School
             schoolList.erase(it);      
             cout << "Da xoa truong: " << school->getName() << endl;
@@ -100,7 +103,7 @@ int main() {
     vnu.display();
 
     // Dọn dẹp bộ nhớ
-    delete s1; delete s2; delete s3;
+    vnu.~University();
 
     return 0;
 }
