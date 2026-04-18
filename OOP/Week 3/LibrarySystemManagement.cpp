@@ -183,9 +183,9 @@ void lendOneBook(string CatalogueNumber, string BorrowerName){
 
 // 2. Định nghĩa display() sau khi BorrowerRecord đã hoàn tất
 void Book::display() {
-    cout << "Ten sach: " << Title << "\n";
-    cout << "Tac gia:  " << Author << "\n";
-    cout << "Ma so:    " << CatalogueNumber << "\n";
+    cout << "Ten sach: " << this->getTitle() << "\n";
+    cout << "Tac gia:  " << this->getAuthor() << "\n";
+    cout << "Ma so:    " << this->getCatalogueNumber() << "\n";
     
     if (borrower != nullptr) {
         cout << "Trang thai: Dang muon boi [" << borrower->getName() << "]\n";
