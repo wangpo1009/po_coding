@@ -67,6 +67,17 @@ class Programmer : public Employee{
   }
 };
 
+class ProjectLeader : public Programmer{
+  private:
+  string projectName;
+  
+  public:
+  ProjectLeader(string number, double salary, string name, string language, string projectName) : Programmer(number, salary, name, language){
+    this->setProjectName(projectName);
+  } 
+  ProjectLeader() : ProjectLeader("000", 0, " ", "cpp", "OOP"){}
+}
+
 class SoftwareHouse{
   private:
   string name;
@@ -90,6 +101,8 @@ class SoftwareHouse{
     programmerList.push_back(A);
   }
 };
+
+
 
 int main(){
   cout << "No hope";
