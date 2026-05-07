@@ -295,8 +295,7 @@ class ExpressShipment : public Shipment {
         ~ExpressShipment() {}
 
         double calculateFee() const override {
-            double baseFee = Shipment::calculateFee();
-            return baseFee * 25;
+            return this->getWeightKg() * 25;
         }
 };
 
@@ -309,7 +308,7 @@ class FragileShipment : public Shipment {
             this->setInsuranceValue(insuranceValue);
         }
         ~FragileShipment() {}
-        
+
         void setInsuranceValue(int value) {
             this->insuranceValue = value;
         }
@@ -318,9 +317,9 @@ class FragileShipment : public Shipment {
         }
 
         double calculateFee() const override {
-            double baseFee = Shipment::calculateFee();
+            double baseFee = this->getWeightKg() * 2;
             double insuranceFee = insuranceValue * 0.01; // 1% of insurance value
-            return baseFee*20 + insuranceFee;
+            return baseFee + insuranceFee;
         }
 };
 
@@ -348,10 +347,6 @@ class Driver{
         Driver(string id) : Driver(id, "", "", nullptr, 0) {}
         Driver() : Driver("", "", "", nullptr, 0) {}
 
-        ~Driver() {
-            delete assignedVehicle;
-            cout << "Driver off!\n";
-        }
         // Setters
         void setDriverId(string id) {
             this->driverId = id;
@@ -544,7 +539,7 @@ class LogisticCompanyManagement {
             }
         }   
 
-        double calculateTotalRevenue(Shipment shipmentId) {
+        double calculateTotalRevenue() {
             double totalRev = 0;
 
             for(Shipment* s : shipments) {
