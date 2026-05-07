@@ -11,6 +11,7 @@ using namespace std;
 
 class Trackable {
     public:
+        virtual ~Trackable() {}
         virtual string getCurrentLocation() const = 0;
         virtual int getStatus() const = 0;
         virtual void updateLocation(string location) = 0;
@@ -18,6 +19,7 @@ class Trackable {
 
 class Payable {
     public:
+        virtual ~Payable() {}
         virtual double calculateFee() const = 0;
         virtual void applyDiscount(double percent) = 0;
 };
@@ -46,7 +48,10 @@ class Vehicle : public Trackable {
         Vehicle(string plate, string location) : Vehicle(plate, location, 0) {}
         Vehicle(string plate) : Vehicle(plate, "", 0) {}
         Vehicle() : Vehicle("", "", 0) {}
-
+        
+        ~Vehicle () {
+            cout << "Vehicle good!\n";
+        };
         // Setters
         void setLicensePlate(string plate) {
             this->licensePlate = plate;
@@ -82,7 +87,6 @@ class Vehicle : public Trackable {
 
         // Additional methods
         void displayInfo() const {
-            cout << "Vehicle ID: " << this->vehicleId << endl;
             cout << "License Plate: " << this->licensePlate << endl;
             cout << "Current Location: " << this->currentLocation << endl;
             cout << "Status: " << (this->status == 0 ? "Idle" : (this->status == 1 ? "In Transit" : "Maintenance")) << endl;
@@ -107,6 +111,9 @@ class Truck : public Vehicle {
         Truck(string plate, string type, int load) : Truck(plate, "", 0, type, load, "Unknown", 0) {}
         Truck(string plate) : Truck(plate, "", 0, "Unknown", 0, "Unknown", 0) {}
 
+        ~Truck() override{
+            cout << "Truck's good to go!\n";
+        }
         // Setters
         void setTruckType(string type) {
             this->truckType = type;
@@ -142,7 +149,10 @@ class Motorbike : public Vehicle {
         Motorbike(string plate, string location, int load) : Motorbike(plate, location, 0, load, 0) {}
         Motorbike(string plate, int load) : Motorbike(plate, "", 0, load, 0) {}
         Motorbike(string plate) : Motorbike(plate, "", 0, 0, 0) {}
-
+        
+        ~Motorbike () override {
+            cout << "Motorbike is good to go!\n"; 
+        }
         // Setters
         void setMaxLoad(int load) {
             this->maxLoad = load;
@@ -182,6 +192,10 @@ class Shipment : public Trackable, public Payable {
             this->destination = destination;
             this->currentLocation = origin;
             this->status = 0; // pending by default
+        }
+
+        ~Shipment() override {
+            cout << "Shipment bye bye!\n";
         }
 
         // Setters
@@ -264,7 +278,7 @@ class StandardShipment : public Shipment {
 
     public:
         StandardShipment(string id, string sender, string receiver, double weight, string origin, string destination) : Shipment(id, sender, receiver, weight, origin, destination) {}      
-
+        ~StandardShipment() {}
 
         double calculateFee() const override {
             return getWeightKg() * 10; // $10 per kg
@@ -277,6 +291,8 @@ class ExpressShipment : public Shipment {
 
     public:
         ExpressShipment(string id, string sender, string receiver, double weight, string origin, string destination) : Shipment(id, sender, receiver, weight, origin, destination) {}      
+
+        ~ExpressShipment() {}
 
         double calculateFee() const override {
             double baseFee = Shipment::calculateFee();
@@ -292,7 +308,8 @@ class FragileShipment : public Shipment {
         FragileShipment(string id, string sender, string receiver, double weight, string origin, string destination, int insuranceValue) : Shipment(id, sender, receiver, weight, origin, destination) {
             this->setInsuranceValue(insuranceValue);
         }
-
+        ~FragileShipment() {}
+        
         void setInsuranceValue(int value) {
             this->insuranceValue = value;
         }
@@ -331,6 +348,10 @@ class Driver{
         Driver(string id) : Driver(id, "", "", nullptr, 0) {}
         Driver() : Driver("", "", "", nullptr, 0) {}
 
+        ~Driver() {
+            delete assignedVehicle;
+            cout << "Driver off!\n";
+        }
         // Setters
         void setDriverId(string id) {
             this->driverId = id;
@@ -403,8 +424,27 @@ class LogisticCompanyManagement {
         vector<Vehicle*> vehicles;
         vector<Shipment*> shipments;
         vector<Driver*> drivers;
+        string companyName;
 
     public:
+        LogisticCompanyManagement(string compName) {
+            this->setName(compName);
+        }
+
+        void setName(string name){
+            this->companyName = name;
+        }
+
+        string getName() {
+            return this->companyName;
+        }
+
+        ~LogisticCompanyManagement() {
+            for(Vehicle* v : vehicles) delete v;
+            for(Shipment* s : shipments) delete s;
+            for(Driver* d : drivers) delete d;
+            cout << "Company gone!\n";
+        }
         void addVehicle(Vehicle* vehicle) {
             vehicles.push_back(vehicle);
         }
@@ -503,11 +543,29 @@ class LogisticCompanyManagement {
                     << " can carry this weight." << endl;
             }
         }   
+
+        double calculateTotalRevenue(Shipment shipmentId) {
+            double totalRev = 0;
+
+            for(Shipment* s : shipments) {
+                totalRev += s->calculateFee();
+            }
+
+            return totalRev;
+        }
+
+        void getShipmentByStatus(int status){
+            for(Shipment* s : shipments) {
+                if(s->getStatus() == status) {
+                    cout << "Shipment with " << status << ": " << s->getShipmentId() << "\n";
+                }
+            }
+        }
 };
 
 
 int main() {
-    cout << "Welcome to the Shipping Management System!" << endl;
+    cout << "Welcome to the Logistic Company Management System!" << endl;
 }
 
 
