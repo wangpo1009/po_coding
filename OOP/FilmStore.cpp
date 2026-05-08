@@ -208,6 +208,36 @@ class Customer {
 //======================== FilmStore ============================
 
 class FilmStore {
+  private: 
+  string name;
+  vector <Film*> stock;
+  vector <Customer*> customerRec;
+  
+  public:
+  FilmStore(string name) {
+    this->setName(name);
+  }
+  FilmStore() : FilmStore("") {}
+  
+  ~FilmStore() {
+    this->stock.clear();
+    
+    for(Customer* cus : this->customerRec {
+      delete cus;
+    }
+    this->customerRec.clear;
+  }
+  
+  void setName(string name) {
+    this->name = name;
+  }
+  
+  string getName() {
+    return this->name;
+  }
+  
+  
+  
   
 };
 
