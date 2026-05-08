@@ -104,7 +104,7 @@ class Film {
     return this->status;
   }
   string getBorrowDate() {
-    return this->borrowingTime;
+    return this->borrowDate;
   }
   Customer* getBorrower() {
     return this->curCustomer;
@@ -119,7 +119,7 @@ class Film {
   }
   
   void attachBorrower (Customer* cus){
-    if(this->getStatus() == 1) {
+    if(this->getStatus() == 0) {
       cout << "Film is being rented!\n";
       return;
     }
@@ -130,20 +130,26 @@ class Film {
     cout << "Success!\n";
   }
   
-  void dettachBorrower() {
+  int dettachBorrower() {
     if(this->getStatus() == 0) {
       cout << "Film is not rented!\n";
-      return;
+      return -1;
     }
     
+    //Cal fee
     int date = calculateDaysGap(this->getBorrowDate(), getCurrentDate());
     if(date == 0) date = 1;
     double totalFee = (double)date * this->getBasePrice();
     cout << "Fee for renting: " << totalFee << "\n";
     
+    //Cal Point
+    int point = (int) (totalFee / 10.0);
+    
     this->setStatus(1);
     this->setBorrowDate("");
     this->setBorrower(nullptr);
+    
+    return point;
   }
 };
 
@@ -195,13 +201,23 @@ class Customer {
   void returnFilm(Film* film){
     for(auto f = rentedFilm.begin(); f != rentedFilm.end(); ++f) {
       if((*f)->getId() == film->getId()){
-        (*f)->dettachBorrower();
+        int point = (*f)->dettachBorrower();
+        //Cal Point
+        int curPoint = this->getMembershipPoint();
+        this->setMembershipPoint(curPoint += point);
+        
         rentedFilm.erase(f);
         cout << "Success!\n";
         return;
       }
     }
     cout << "Error!\n";
+  }
+  
+  void displayInfo() {
+    cout << "Customer Name: " << this->getName() << "\n";
+    cout << "CustomerId : " << this->getCusId() << "\n";
+    cout << "Membership Point: " << this->getMembershipPoint() << "\n\n";
   }
 };
 
@@ -222,10 +238,10 @@ class FilmStore {
   ~FilmStore() {
     this->stock.clear();
     
-    for(Customer* cus : this->customerRec {
+    for(Customer* cus : this->customerRec) {
       delete cus;
     }
-    this->customerRec.clear;
+    this->customerRec.clear();
   }
   
   void setName(string name) {
@@ -236,9 +252,77 @@ class FilmStore {
     return this->name;
   }
   
+  void addFilm(Film* f) {
+    this->stock.push_back(f);
+  }
   
+  void addCustomer(Customer* cus) {
+    this->customerRec.push_back(cus);
+  }
   
-  
+  void findBestCus() {
+    if (customerRec.empty()) {
+        cout << "Store has no customers yet!" << endl;
+        return;
+    }
+
+    Customer* bestCus = customerRec[0];
+    for (Customer* cus : customerRec) {
+        if (cus->getMembershipPoint() > bestCus->getMembershipPoint()) {
+            bestCus = cus;
+        }
+    }
+
+    cout << "Best Customer is: " << bestCus->getName() 
+         << " with " << bestCus->getMembershipPoint() << " points." << endl;
+  }
 };
+
+int main() {
+    // 1. Khởi tạo Store
+    FilmStore myStore("Po's Movie Emporium");
+
+    // 2. Tạo một số bộ phim (Sử dụng Polymorphism nếu bạn có class con)
+    Film* f1 = new Film("F001", "Inception", 15.0);
+    Film* f2 = new Film("F002", "The Matrix", 10.0);
+    Film* f3 = new Film("F003", "Interstellar", 20.0);
+
+    myStore.addFilm(f1);
+    myStore.addFilm(f2);
+    myStore.addFilm(f3);
+
+    // 3. Tạo khách hàng
+    Customer* cus1 = new Customer("C001", "Quang Phong");
+    Customer* cus2 = new Customer("C002", "Anh Tuan");
+
+    myStore.addCustomer(cus1);
+    myStore.addCustomer(cus2);
+
+    cout << "--- BAT DAU THUE PHIM ---" << endl;
+    
+    // Test Case 1: Khách 1 thuê phim
+    cus1->attachFilm(f1); 
+    cus1->attachFilm(f3);
+
+    // Test Case 2: Khách 2 thuê phim đã bị thuê (Sẽ báo lỗi nếu logic check status đúng)
+    cus2->attachFilm(f1); 
+
+    cout << "\n--- TRA PHIM VA TINH PHI ---" << endl;
+    // Giả sử mượn và trả cùng ngày (Hàm gap trả về 0 -> logic của bạn đưa về 1 ngày)
+    cus1->returnFilm(f1);
+    
+    // Giả cập nhật điểm thủ công để test hàm findBestCus
+    cus1->setMembershipPoint(100);
+    cus2->setMembershipPoint(50);
+
+    cout << "\n--- THONG KE CUA HANG ---" << endl;
+    myStore.findBestCus();
+
+    // Lưu ý: Destructor của FilmStore sẽ tự delete cus1, cus2.
+    // Nhưng f1, f2, f3 bạn cũng nên quản lý delete trong Destructor FilmStore 
+    // tương tự như customerRec để tránh leak bộ nhớ.
+
+    return 0;
+}
 
 
