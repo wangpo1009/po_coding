@@ -1,146 +1,218 @@
 #include <iostream>
 #include <string>
-#include <algorithm>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
-class Employee;
-class SoftwareHouse;
-class Programmer;
-class ProjectLeader;
+class BorrowerRecord;
+class Book;
+class Library;
 
+//======================= BOOK ==========================
+class Book {
+private:
+    string CatalogueNumber;
+    string Author;
+    string Title;
+    BorrowerRecord* borrower;
 
-//=============== Employee ==================
-class Employee{
-  private:
-  string number;
-  double salary;
+public:
+// Constructor
+    Book(string CatalogueNumber, string Author, string Title) {
+        this->setCatalogueNumber(CatalogueNumber);
+        this->setAuthor(Author);
+        this->setTitle(Title);
+        this->setBorrower(nullptr); 
+    }
+
+    Book() : Book("", "", "") {}
+
+// Setter
+    void setCatalogueNumber(string cn) { this->CatalogueNumber = cn; }
+    void setAuthor(string a) { this->Author = a; }
+    void setTitle(string t) { this->Title = t; }
+    void setBorrower(BorrowerRecord *borrower){ this->borrower = borrower; }
+
+// Getter
+    string getCatalogueNumber() { return CatalogueNumber; }
+    string getAuthor() { return Author; }
+    string getTitle() { return Title; }
+    BorrowerRecord* getBorrower() { return borrower; }
+    
+// Inner Function
+    void attachBorrower(BorrowerRecord* b) { setBorrower(b); }
+    void dettachBorrower(){ this->borrower = nullptr; }
+
+// Chỉ khai báo, định nghĩa ở cuối file
+    void display();
+}; 
+
+//===================== BORROWER RECORD =============================
+class BorrowerRecord {
+private:
+    string name;
+    vector<Book*> books;
+
+public:
+// Constructor
+    BorrowerRecord(string name) { this->name = name; }
+    BorrowerRecord() : BorrowerRecord(" "){}
+
+// Getter & Setter
+    void setName(string name) { this->name = name; }
+    string getName() { return name; }
+
+// Inner Func
+    void attachBook(Book* b) {
+        if (b != nullptr && b->getBorrower() == nullptr) {
+            books.push_back(b);
+            b->attachBorrower(this);
+        }
+    }
+    
+    void detachBook(Book* b) {
+        auto it = find(books.begin(), books.end(), b); // So sánh con trỏ trực tiếp
+        if (it != books.end()) {
+            books.erase(it);
+            b->attachBorrower(nullptr); // Sách không còn người mượn
+        }
+    }
+
+    void displayBorrowedBooks() {
+        cout << "--- Danh sach muon cua: " << this->getName() << " ---\n";
+        if (books.empty()) {
+            cout << "(Trong)\n";
+        } else {
+            for (Book* b : books) {
+                cout << "+ " << b->getTitle() << " [" << b->getCatalogueNumber() << "]\n";
+            }
+        }
+        cout << "--------------------------\n";
+    }
+};
+
+//======================== LIBRARY ============================
+class Library{
   string name;
+  vector <BorrowerRecord*> BorrowerList;
+  vector <Book*> Stock;
   
   public:
-  Employee(string number, double salary, string name){
-    this->setNumber(number);
-    this->setSalary(salary);
-    this->setName(name);
-  }
-  Employee() : Employee("000", 0, " "){}
+// Constructor
+  Library(string name) { this->setName(name); }
   
-  //===== Setter =====
-  void setName(string name){
-    this->name = name;
-  }
-  void setNumber(string number){
-    this->number = number;
-  }
-  void setSalary(double salary){
-    this->salary = salary;
+// Destructor
+  ~Library(){
+    this->Stock.clear();
+    for(auto i : this->getBorrowerList()) {
+      delete(i);
+    }
+    this->BorrowerList.clear();
   }
   
-  //===== Getter =====
-  string getName(){
-    return name;
-  }
-  double getSalary(){
-    return salary;
-  }
-  string getNumber(){
-    return number;
-  }
+// Getter & Setter
+  void setName(string name) { this->name = name; }
   
-  
-};
+  string getName() { return name; }
+  vector <Book*> getStock() { return Stock; }
+  vector <BorrowerRecord*> getBorrowerList() { return BorrowerList; }
 
-//================== Programmer ==================
-class Programmer : public Employee{
-  private:
-  string language;
-  ProjectLeader* leader;
-  
-  public:
-  Programmer(string number, double salary, string name, string language) : Employee(number, salary, name){
-    this->setLanguage(language);
-    this->leader = nullptr;
-  }
-  Programmer() : Programmer("000", 0, " ", "cpp"){}
-  
-  void setLanguage(string language){
-    this->language = language;
-  }
-  void setLeader(ProjectLeader* A){
-    this->leader = A;
+// Inner Func
+  void registerOneBorrower(string borrowerName) {
+    BorrowerList.push_back(new BorrowerRecord(borrowerName));
+    printf("SUCCESS!\n");
   }
   
-  string getLanguage(){
-    return language;
+  void addOneBook(string CatalogueNumber, string Author, string Title) {
+    Stock.push_back(new Book(CatalogueNumber, Author, Title));
+    printf("SUCCESS!\n");
   }
-  ProjectLeader* getProjectLeader(){
-    return leader;
+  
+  void displayBooksAvailable(){
+    for(auto i : this->getStock()){
+      if(i->getBorrower() == nullptr){
+        i->display();
+      }
+    }
   }
-};
+  
+  void displayBookOnLoan(){
+    for(auto i : this->getStock()){
+      if(i->getBorrower() != nullptr){
+        i->display();
+      }
+    }
+  }
+  
+  
+void lendOneBook(string CatalogueNumber, string BorrowerName){
+    Book* b = nullptr;
+    BorrowerRecord* borrower = nullptr;
 
-//================ ProjectLeader =======================
-class ProjectLeader : public Programmer{
-  private:
-  string projectName;
-  vector <Programmer*> team;
-  
-  public:
-  ProjectLeader(string number, double salary, string name, string language, string projectName) : Programmer(number, salary, name, language){
-    this->setProjectName(projectName);
-  } 
-  ProjectLeader() : ProjectLeader("000", 0, " ", "cpp", "OOP"){}
-  
-  void setProjectName(string projectName){
-    this->projectName = projectName;
-  }
-  
-  string getProjectName(){
-    return projectName;
-  }
-  
-  void addProgrammer(Programmer* A){
-    team.push_back(A);
-    A->setLeader(this);
-  }
-  
-  
-};
+    for(auto i : this->getStock()){
+        if(i->getCatalogueNumber() == CatalogueNumber){
+            b = i;
+            break;
+        }
+    }
 
-//================= SoftwareHouse ======================
-class SoftwareHouse{
-  private:
-  string name;
-  vector <Programmer*> programmerList;
-  vector <ProjectLeader*> leaderList;
+    for(auto i : this->getBorrowerList()){
+        if(i->getName() == BorrowerName){
+            borrower = i;
+            break;
+        }
+    }
+
+    if(b != nullptr && borrower != nullptr && b->getBorrower() == nullptr){
+        borrower->attachBook(b);
+    }
+}
   
-  public:
-  SoftwareHouse(string name){
-    this->setName(name);
-  }
-  SoftwareHouse() : SoftwareHouse("NhoNguoiCanQuen"){}
-  
-  void setName(string name){
-    this->name = name;
-  }
-  
-  string getName(){
-    return name;
-  }
-  
-  void addProgrammer(Programmer* A){
-    programmerList.push_back(A);
-  }
-  
-  void addProjectLeader(ProjectLeader* A){
-    leaderList.push_back(A);
+  void returnOneBook(string CatalogueNumber) {
+    for(auto i : this->getStock()){
+      if(i->getCatalogueNumber() == CatalogueNumber){
+        i->dettachBorrower();
+      }
+    }
   }
   
 };
 
-
+// 2. Định nghĩa display() sau khi BorrowerRecord đã hoàn tất
+void Book::display() {
+    cout << "Ten sach: " << Title << "\n";
+    cout << "Tac gia:  " << Author << "\n";
+    cout << "Ma so:    " << CatalogueNumber << "\n";
+    
+    if (borrower != nullptr) {
+        cout << "Trang thai: Dang muon boi [" << borrower->getName() << "]\n";
+    } else {
+        cout << "Trang thai: San sang cho muon\n";
+    }
+    cout << "--------------------------\n";
+}
 
 int main(){
-  cout << "No hope";
+  Library hcmus("HCMUS Library");
+
+    hcmus.addOneBook("B01", "J.K. Rowling", "Harry Potter");
+    hcmus.addOneBook("B02", "J.R.R. Tolkien", "The Hobbit");
+    hcmus.registerOneBorrower("Chris");
+    hcmus.registerOneBorrower("Elton");
+  printf("\n");
+ 
+    hcmus.displayBooksAvailable();
+    hcmus.lendOneBook("B01", "Chris");
+    
+  printf("\n");
+  
+    hcmus.displayBooksAvailable();
+    
+  printf("\n");
+    
+    hcmus.returnOneBook("B01");
+    hcmus.displayBooksAvailable();
+  
   return 0;
 }
