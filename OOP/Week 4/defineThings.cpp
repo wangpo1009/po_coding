@@ -99,10 +99,20 @@ class ProjectLeader : public Programmer{
   }
   
   void displayProjectMember() {
-    cout << "Member: "
+    cout << "Member: \n";
+    for(Employee* emp : member) {
+        emp->displayInfo();
+        cout <<"=================\n";
+    }
+  }
+
+  void displayInfo() override {
+    cout << "Project : " << this->getProjectName();
+    this->displayProjectMember();
   }
 };
 
+class Administrator : Employee
 class SoftwareHouse{
   private:
   string name;
@@ -129,7 +139,7 @@ class SoftwareHouse{
   void displayAllEmployees() {
     cout << "--- Software House: " << this->getName() << " ---\n";
     for (Employee* emp : programmerList) {
-        emp->displayInfo(); // Nhờ virtual, nó sẽ tự gọi đúng hàm của Programmer/Employee
+        emp->displayInfo();
         cout << "--------------------------\n";
     }
   }
