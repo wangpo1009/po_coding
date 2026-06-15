@@ -19,16 +19,21 @@ bool checkTail(string name, string val) {
     return name.substr(name.length() - val.length()) == val;
 }
 
-bool validFileName(string name, string val = "") {
-    string forbidden = "\\/:*?\"<>|";
-    
-    if(!checkTail(name, val)) return false;
-    
-    
-    for(int i = 0; i < name.length() - val.length(); i++) {
-        if( checkForbidden(name[i]) ) return false;
-        if( name[i] == '.') return false;
+bool validFileName(string name, string ext = "") {
+    if(!checkTail(name, ext))
+        return false;
+
+    if(name.length() == ext.length())
+        return false;
+
+    for(size_t i = 0; i < name.length() - ext.length(); i++) {
+        if(checkForbidden(name[i]))
+            return false;
+
+        if(name[i] == '.')
+            return false;
     }
+
     return true;
 }
 
@@ -42,10 +47,6 @@ class Object{
     }
 
     virtual void setName(string name) {
-        if(!validFileName(name)) {
-            cout << "File name no good!\n";
-            return;
-        } 
         this->name = name;
     }
 
@@ -157,7 +158,6 @@ int main() {
     main.addObject(&au1);
 
     home.display();
-
-
+    return 0;
 }
 
